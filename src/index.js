@@ -47,10 +47,7 @@ function createCards(){
 
         cardHolder.appendChild(card);
         card.appendChild(createCardTitle(i));
-        const arr = createCardImage(i);
-        card.appendChild(arr[0]);
-        card.appendChild(arr[1]);
-
+        card.appendChild(createCardImage(i));
         card.appendChild(createCardStats(i));
         card.appendChild(createGames(i));
     }
@@ -67,14 +64,10 @@ function createCardImage(index){
     const img = document.createElement("img");
     const img2 = document.createElement("img");
     img.className = "card--img" + " " + index;
-    img2.className = "card--img" + " " + "hide";
     img.setAttribute("width", 256);
-    img2.setAttribute("width",256);
     img.setAttribute("src", data[index].sprites.other["official-artwork"].front_default);
-    img2.setAttribute("src",data[index].sprites.other["dream_world"].front_default);
     img.setAttribute("onclick","clickHandlerImage(this)");
-    img2.setAttribute("onclick","clickHandlerImage(this)");
-    return [img, img2];
+    return img;
 }
 
 function createCardStats(index){
@@ -114,7 +107,6 @@ function clickHandlerImage(e){
     else {
         e.setAttribute("src",data[index].sprites.other["official-artwork"].front_default);
     }
-    
 }
 
 createCards();
