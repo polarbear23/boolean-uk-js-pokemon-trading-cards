@@ -6,7 +6,7 @@
 // pokemon.sprites.other['official-artwork'].front_default
 
 // - Render all the cards on the page that represents all the pokemons, recreating the same layout, using JS
-/*
+/* this is one card implementation 
 const card = document.createElement("li");
 const title = document.createElement("h2");
 const img = document.createElement("img");
@@ -36,33 +36,31 @@ console.log(data);
 */
 
 
-function createCards(){
+function createCards(){ //main function calling all other functions
     
     for(let i = 0; i< data.length; i++){
-        console.log("a");
         const card = document.createElement("li");
         const cardHolder = document.querySelector("ul");
-        card.className = "card";
-
-
+        card.className = "card" + " " + i;
         cardHolder.appendChild(card);
+        card.appendChild(genSelector(i, card));
         card.appendChild(createCardTitle(i));
         card.appendChild(createCardImage(i));
         card.appendChild(createCardStats(i));
         card.appendChild(createGames(i));
+        
     }
 }
 
-function createCardTitle(index){
+function createCardTitle(index){ //creates the title section and returns it
     const title = document.createElement("h2");
     title.className = "card--title";
     title.innerText = data[index].name.toUpperCase();
     return title;
 }
 
-function createCardImage(index){
+function createCardImage(index){ //creates the card img element and returns it
     const img = document.createElement("img");
-    const img2 = document.createElement("img");
     img.className = "card--img" + " " + index;
     img.setAttribute("width", 256);
     img.setAttribute("src", data[index].sprites.other["official-artwork"].front_default);
@@ -70,7 +68,7 @@ function createCardImage(index){
     return img;
 }
 
-function createCardStats(index){
+function createCardStats(index){ // creates the card stats section of the card and returns it
     const stats = document.createElement("ul");
     stats.className = "card--text";
     for(let i = 0; i < data[index].stats.length; i++){
@@ -81,7 +79,7 @@ function createCardStats(index){
     return stats;
 }
 
-function createGames(index){
+function createGames(index){ //creates the section about all the games this pokemon is in and returns it
     const games = document.createElement("ul");
     games.className = "card--text";
     games.innerText = "Games:";
@@ -98,15 +96,103 @@ function createGames(index){
 function clickHandlerImage(e){
     const classes = e.className.split(" ");
     const index = classes[1]; // index of what pokemon it is
-    
+    console.log(index);
     if(e.getAttribute("src") === data[index].sprites.other["official-artwork"].front_default)
     {
         e.setAttribute("src",data[index].sprites.other.dream_world.front_default);
-        
     }
     else {
         e.setAttribute("src",data[index].sprites.other["official-artwork"].front_default);
     }
 }
 
+
+
+
+
+function genSelector(index, card){
+    const genSelect = document.createElement("select");
+    genSelect.setAttribute("className",index);
+    genSelect.setAttribute("onchange", "createNewSelect(this)");
+
+    const versions = data[index].sprites.versions;
+    const gameSelect = document.createElement("select");
+    
+
+    
+    for (let key in versions) {
+        if (versions.hasOwnProperty(key)) {
+           const generationName = key;
+           const genOption = document.createElement("option");
+           genOption.innerText = generationName;
+           genOption.setAttribute("value", generationName);
+           genSelect.appendChild(genOption);
+           gameSelect.setAttribute("classname",index);
+           gameSelect.setAttribute("onchange","updateCardImage(this)");
+
+        }   
+    }
+    const gameType = genSelect.options[genSelect.selectedIndex].value;
+    const gamesObject = data[index].sprites.versions[gameType];
+    for (let key2 in gamesObject) {
+        const gameOptionName = key2;
+        const gameOption = document.createElement("option");
+        gameOption.innerText = gameOptionName;
+        gameOption.setAttribute("value", gameOptionName);
+        
+        gameSelect.appendChild(gameOption);
+
+
+    }
+    card.appendChild(genSelect);
+    return gameSelect;
+}
+
+function createNewSelect(e){
+    const index = e.getAttribute("className");
+    //console.log(index);
+    const cardEl = document.getElementsByClassName(`card ${index}`);
+    //console.log(cardEl[0]);
+    const selectArr = cardEl[0].querySelectorAll("select");
+    selectArr[1].remove();
+
+    const gameSelect = document.createElement("select");
+    gameSelect.setAttribute("className",index);
+    gameSelect.setAttribute("onchange","updateCardImage(this)");
+    const gameType = e.value;
+    const gamesObject = data[index].sprites.versions[gameType];
+    for (let key in gamesObject) {
+        const gameOptionName = key;
+        const gameOption = document.createElement("option");
+        gameOption.innerText = gameOptionName;
+        gameOption.setAttribute("value", gameOptionName);
+        gameSelect.appendChild(gameOption);
+    }
+    insertAfter(e,gameSelect);
+
+}
+
+function insertAfter(referenceNode, newNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
+function updateCardImage(e){
+    const image = e.closest(".card").querySelector("img");
+    const select = e.closest(".card").querySelector("select");
+   
+    const index = e.getAttribute("className");
+    console.log(Number(index));
+    console.log(e.value);
+    const gamesObject = data[Number(index)].sprites.versions[select.value];
+    console.log(data[Number(index)]);
+
+    for (let key in gamesObject) {
+        if(key === e.value){
+            image.setAttribute("src", gamesObject[e.value].front_default);
+        }
+    }
+   // image.setAttribute("src",);
+}
+
 createCards();
+
