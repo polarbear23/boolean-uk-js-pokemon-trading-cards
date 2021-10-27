@@ -26,6 +26,10 @@
   h2 {
     text-align: center;
   }
+  input{
+    margin-bottom: 15px;
+  }
+  
   
   .cards {
     display: grid;
