@@ -47,7 +47,9 @@ function createCards(){ //main function calling all other functions
         card.appendChild(createCardTitle(i));
         card.appendChild(createCardImage(i));
         card.appendChild(createCardStats(i));
-        card.appendChild(createGames(i));
+        const arrow = createArrow(card, i, createGames(i));
+        card.appendChild(arrow);
+        
         
     }
 }
@@ -79,9 +81,47 @@ function createCardStats(index){ // creates the card stats section of the card a
     return stats;
 }
 
+function createArrow(card, index, games){
+    const arrowImage = document.createElement("img");
+    const container = document.createElement("div");
+    const arrowContainer = document.createElement("div");
+    arrowImage.setAttribute("height", "30px");
+    arrowImage.setAttribute("onclick", "");
+    arrowImage.setAttribute("className", `arrow ${index}`);
+    arrowImage.src = "images/arrow.svg";
+
+    arrowImage.addEventListener("click",() => {
+        const gameList = container.querySelector("ul");
+        console.log(gameList);
+        if(gameList.classList.contains("hide")){
+            gameList.classList.remove("hide");
+            arrowImage.style.transform = "scaleY(-1)";
+        }
+        else{
+            gameList.classList.remove("show");
+            gameList.classList.add("hide");
+            arrowImage.removeAttribute("style");
+           
+
+        }
+    });
+
+    container.style.display = "grid";
+    container.style.gridTemplateRows = "1fr 0.1fr";
+    container.appendChild(games);
+    arrowContainer.style.display = "grid";
+    arrowContainer.style.placeItems = "center";
+    arrowContainer.appendChild(arrowImage);
+    container.appendChild(arrowContainer);
+    return container;
+}
+
+
+
+
 function createGames(index){ //creates the section about all the games this pokemon is in and returns it
     const games = document.createElement("ul");
-    games.className = "card--text";
+    games.className = "card--text hide";
     games.innerText = "Games:";
     for(let i = 0; i < data[index].game_indices.length; i++)
     {
@@ -191,7 +231,6 @@ function updateCardImage(e){
             image.setAttribute("src", gamesObject[e.value].front_default);
         }
     }
-   // image.setAttribute("src",);
 }
 
 createCards();
