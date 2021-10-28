@@ -12,7 +12,7 @@ const title = document.createElement("h2");
 const img = document.createElement("img");
 const stats = document.createElement("ul");
 const stat = document.createElement("li");
-
+ 
 card.className = "card";
 title.className = "card--title";
 title.innerText = data[0].name;
@@ -21,9 +21,6 @@ img.setAttribute("width", 256);
 img.setAttribute("src", data[0].sprites.other["official-artwork"].front_default);
 stats.className = "card--text";
 stat.innerText = `${data[0].stats[0].stat.name.toUpperCase()}: ${data[0].stats[0].base_stat}`;
-
-
-
 
 card.appendChild(title);
 card.appendChild(img);
@@ -138,6 +135,7 @@ function clickHandlerImage(e){
     const classes = e.className.split(" ");
     const index = classes[1]; // index of what pokemon it is
     console.log(index);
+    console.log(e);
     if(e.getAttribute("src") === data[index].sprites.other["official-artwork"].front_default)
     {
         e.setAttribute("src",data[index].sprites.other.dream_world.front_default);
@@ -253,12 +251,21 @@ function createForm(){
     altImageLabel.innerText = "Alt Image src:"
     submit.setAttribute("type", "submit");
     
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', (e) => {
         // stop form submission
-        event.preventDefault();
+        e.preventDefault();
+        const inputArr = e.target.querySelectorAll("input");
+        console.log(inputArr);
+        const name = inputArr[0].value;
+        const mainImage = inputArr[1].value;
+        const altImage = inputArr[2].value;
+       // inputArr[0].value = "";
+        inputArr[1].value = "";
+        inputArr[2].value = "";
         //form.submit();
-        addNewCard();
-    });    formHolder.appendChild(form);
+        addNewCard(name, mainImage, altImage);
+    });    
+    formHolder.appendChild(form);
     form.appendChild(heading);
     form.appendChild(nameLabel);
     form.appendChild(mainImageLabel);
@@ -271,24 +278,19 @@ function createForm(){
 }
 
 
-function addNewCard(){
-    const form = document.querySelector("form");
-    const name = form.elements['name'];
-    const mainImage = form.elements['mainImageSRC'];
-    const altImage = form.elements['altImageSRC'];
-
+function addNewCard(name, mainImage, altImage){
     const newCard = {
-        name: name.value,
+        name: name,
         sprites: {
             other: {
                 dream_world: {
-                    front_default: mainImage.value,
+                    front_default: mainImage,
                 },
                 "official-artwork": {
-                    front_default: altImage.value,
+                    front_default: altImage,
                 }
-            }
-        },
+            },
+        
         versions: {
             "generation-i": {
               "red-blue": {
@@ -486,7 +488,8 @@ function addNewCard(){
                 front_female: null
               }
             }
-          }, 
+          }
+        }, 
         stats: [
           {
             base_stat: 45,
@@ -679,11 +682,13 @@ function addNewCard(){
             }
           }
         ],
-        id: 1
+        id: 21
       }
       data.push(newCard);
+      console.log(data);
       console.log("newcard");
-      updateCards(createACard((data.length-1)));
+      const createdCard = createACard(data.length-1);
+      updateCards(createdCard);
     }
 
 

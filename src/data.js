@@ -1,5 +1,5 @@
 const data = [
-    {
+    { 
       name: "bulbasaur",
       sprites: {
         back_default:
